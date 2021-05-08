@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Suvetha Babu" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>SDS 348 Project 1: Exploratory Data Analysis</title>
+    <meta name="generator" content="Hugo 0.83.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project1dataanalysis/">SDS 348 Project 1: Exploratory Data Analysis</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p>Introduction:</p>
+<p>I chose two datasets, one with data on public spending on education per child in each state and another describing minimum wage in the US by state. I thought it would be interesting to study the state-by-state differences in educational spending as I work with children in the education field and hope to go into research regarding children as well. I also believe there will be a relation between the minimum wage of each state and the amount of money they spend for public education per child as states that do not have higher levels spending for wage may also not be willing to spend more toward education. I also feel it is an important relationship to study as children who learn in environments with less money alloted to them, come out of those environments and are not afforded as much pay as well, which leads to a lesser standard of living on top of the probable lesser standard of education upheld in their youth.</p>
+<p>The ‘State_Spending_on_Kids’ dataset includes the dollar amount spent on public education per child ages 0-18 every year in each state and territory in the U.S. from the years 1997 to 2016, adjusted for inflation. The variables are the state and each of the years. The ‘Minimum_Wage’ dataset describes the minimum wage in the U.S. by state from the years 1968 to 2017. The variables include the state, the year, the state’s minimum wage, the minimum wage adjusted to 2020 dollars, federal minimum wage that year, effective minimum age (if the federal minimum wage is higher than the state minimum wage than that takes effect instead of what the state sets), effective minimum wage in 2020 dollars. There are other variables as well such as ‘CPI.Average’ (Consumer Price Index Average) in that year, ‘Department.Of.Labor.Cleaned.Low.Value’ which denotes the states lowest enforced minimum wage value, there is also a variable for this value in 2020 dollars, and a ‘Department.Of.Labor.Cleaned.High.Value’ which is the higher enforced minimum value by the state which is the same as the low value in states with only one minimum wage (and a variable for this value in 2020 dollars).</p>
+<p>Part 1: Tidying Datasets</p>
+<pre class="r"><code>library(tidyverse)
+library(dplyr)
+
+# dataset 1 State Spending on Kids dataset
+library(readr)
+State_Spending_on_Kids &lt;- read_csv(&quot;State_Spending_on_Kids.csv&quot;)
+
+# dataset 2 Minimum Wage dataset
+library(readr)
+Minimum_Wage &lt;- read_csv(&quot;Minimum_Wage_Data.csv&quot;)
+
+glimpse(State_Spending_on_Kids)</code></pre>
+<pre><code>## Rows: 51
+## Columns: 21
+## $ state  &lt;chr&gt; &quot;Alabama&quot;, &quot;Alaska&quot;, &quot;Arizona&quot;, &quot;Arkansas&quot;, &quot;California&quot;, &quot;Col…
+## $ `1997` &lt;dbl&gt; 3929, 7548, 3707, 3891, 4282, 4380, 6697, 5625, 6105, 4454, 46…
+## $ `1998` &lt;dbl&gt; 4163, 7127, 3716, 4141, 4653, 4640, 6393, 5736, 7193, 4563, 47…
+## $ `1999` &lt;dbl&gt; 4434, 7617, 3810, 4289, 4848, 4762, 7074, 5797, 7727, 4745, 50…
+## $ `2000` &lt;dbl&gt; 4598, 7730, 3938, 4399, 5118, 4838, 7257, 6044, 9001, 4682, 52…
+## $ `2001` &lt;dbl&gt; 4651, 7948, 4002, 4542, 5559, 5014, 7503, 6237, 9786, 4760, 54…
+## $ `2002` &lt;dbl&gt; 4742, 8204, 4071, 4707, 6029, 5256, 7816, 6482, 10712, 4856, 5…
+## $ `2003` &lt;dbl&gt; 4831, 8377, 4268, 4906, 6109, 5414, 8033, 6745, 11455, 5070, 5…
+## $ `2004` &lt;dbl&gt; 4879, 8477, 4412, 5049, 6169, 5559, 8239, 6946, 12074, 5213, 5…
+## $ `2005` &lt;dbl&gt; 5064, 8800, 4430, 5509, 6209, 5629, 8358, 7169, 12693, 5381, 5…
+## $ `2006` &lt;dbl&gt; 5407, 9063, 4514, 5644, 6301, 5736, 8670, 7456, 12837, 5563, 6…
+## $ `2007` &lt;dbl&gt; 5830, 9467, 4610, 5741, 6641, 5648, 8953, 7122, 12505, 5915, 6…
+## $ `2008` &lt;dbl&gt; 6209, 10976, 4800, 5780, 6818, 6077, 9281, 7452, 16310, 6074, …
+## $ `2009` &lt;dbl&gt; 6107, 11694, 4860, 6205, 6663, 5840, 9889, 7246, 17352, 5847, …
+## $ `2010` &lt;dbl&gt; 6029, 11966, 4727, 6552, 6377, 5915, 10060, 7348, 18810, 5788,…
+## $ `2011` &lt;dbl&gt; 5976, 11939, 4489, 6622, 6158, 5747, 9785, 7580, 17640, 5840, …
+## $ `2012` &lt;dbl&gt; 5652, 11260, 4329, 5966, 6191, 5565, 9856, 8136, 17892, 5414, …
+## $ `2013` &lt;dbl&gt; 5738, 11628, 4080, 5888, 6117, 5588, 9967, 8059, 17281, 5381, …
+## $ `2014` &lt;dbl&gt; 5780, 11505, 4230, 5903, 6240, 5767, 10295, 8148, 16983, 5517,…
+## $ `2015` &lt;dbl&gt; 5764, 12108, 4145, 5912, 6761, 5874, 10561, 8229, 17097, 5541,…
+## $ `2016` &lt;dbl&gt; 5671, 10627, 4146, 5928, 7165, 6062, 10810, 8438, 17658, 5504,…</code></pre>
+<pre class="r"><code>glimpse(Minimum_Wage)</code></pre>
+<pre><code>## Rows: 2,862
+## Columns: 15
+## $ Year                                                &lt;dbl&gt; 1968, 1968, 1968,…
+## $ State                                               &lt;chr&gt; &quot;Alabama&quot;, &quot;Alask…
+## $ State.Minimum.Wage                                  &lt;dbl&gt; 0.00000, 2.10000,…
+## $ State.Minimum.Wage.2020.Dollars                     &lt;dbl&gt; 0.00, 15.61, 3.48…
+## $ Federal.Minimum.Wage                                &lt;dbl&gt; 1.15, 1.15, 1.15,…
+## $ Federal.Minimum.Wage.2020.Dollars                   &lt;dbl&gt; 8.55, 8.55, 8.55,…
+## $ Effective.Minimum.Wage                              &lt;dbl&gt; 1.15, 2.10, 1.15,…
+## $ Effective.Minimum.Wage.2020.Dollars                 &lt;dbl&gt; 8.55, 15.61, 8.55…
+## $ CPI.Average                                         &lt;dbl&gt; 34.8, 34.8, 34.8,…
+## $ Department.Of.Labor.Uncleaned.Data                  &lt;chr&gt; &quot;...&quot;, &quot;2.1&quot;, &quot;18…
+## $ Department.Of.Labor.Cleaned.Low.Value               &lt;dbl&gt; 0.00000, 2.10000,…
+## $ Department.Of.Labor.Cleaned.Low.Value.2020.Dollars  &lt;dbl&gt; 0.00, 15.61, 3.48…
+## $ Department.Of.Labor.Cleaned.High.Value              &lt;dbl&gt; 0.00000, 2.10000,…
+## $ Department.Of.Labor.Cleaned.High.Value.2020.Dollars &lt;dbl&gt; 0.00, 15.61, 4.91…
+## $ Footnote                                            &lt;chr&gt; NA, NA, &quot;(b)&quot;, &quot;(…</code></pre>
+<pre class="r"><code># Reading in and briefly viewing original datasets</code></pre>
+<pre class="r"><code>new_State_Spending &lt;- State_Spending_on_Kids %&gt;% pivot_longer(contains(c(&quot;0&quot;, 
+    &quot;1&quot;)), names_to = &quot;Year&quot;, values_to = &quot;Dollars_Spent_per_Child&quot;) %&gt;% 
+    rename(State = state)
+new_State_Spending$Year &lt;- as.numeric(as.character(new_State_Spending$Year))  #changed Year column from character to numeric
+glimpse(new_State_Spending)</code></pre>
+<pre><code>## Rows: 1,020
+## Columns: 3
+## $ State                   &lt;chr&gt; &quot;Alabama&quot;, &quot;Alabama&quot;, &quot;Alabama&quot;, &quot;Alabama&quot;, &quot;…
+## $ Year                    &lt;dbl&gt; 2000, 2001, 2002, 2003, 2004, 2005, 2006, 200…
+## $ Dollars_Spent_per_Child &lt;dbl&gt; 4598, 4651, 4742, 4831, 4879, 5064, 5407, 583…</code></pre>
+<pre class="r"><code>new_Minimum_Wage &lt;- Minimum_Wage %&gt;% select(-Footnote, -Department.Of.Labor.Uncleaned.Data) %&gt;% 
+    select(State, everything()) %&gt;% arrange(State)
+glimpse(new_Minimum_Wage)</code></pre>
+<pre><code>## Rows: 2,862
+## Columns: 13
+## $ State                                               &lt;chr&gt; &quot;Alabama&quot;, &quot;Alaba…
+## $ Year                                                &lt;dbl&gt; 1968, 1969, 1970,…
+## $ State.Minimum.Wage                                  &lt;dbl&gt; 0, 0, 0, 0, 0, 0,…
+## $ State.Minimum.Wage.2020.Dollars                     &lt;dbl&gt; 0, 0, 0, 0, 0, 0,…
+## $ Federal.Minimum.Wage                                &lt;dbl&gt; 1.15, 1.15, 1.30,…
+## $ Federal.Minimum.Wage.2020.Dollars                   &lt;dbl&gt; 8.55, 8.11, 8.67,…
+## $ Effective.Minimum.Wage                              &lt;dbl&gt; 1.15, 1.15, 1.30,…
+## $ Effective.Minimum.Wage.2020.Dollars                 &lt;dbl&gt; 8.55, 8.11, 8.67,…
+## $ CPI.Average                                         &lt;dbl&gt; 34.8, 36.7, 38.8,…
+## $ Department.Of.Labor.Cleaned.Low.Value               &lt;dbl&gt; 0, 0, 0, 0, 0, 0,…
+## $ Department.Of.Labor.Cleaned.Low.Value.2020.Dollars  &lt;dbl&gt; 0, 0, 0, 0, 0, 0,…
+## $ Department.Of.Labor.Cleaned.High.Value              &lt;dbl&gt; 0, 0, 0, 0, 0, 0,…
+## $ Department.Of.Labor.Cleaned.High.Value.2020.Dollars &lt;dbl&gt; 0, 0, 0, 0, 0, 0,…</code></pre>
+<p>I created separate variables for ‘Year’ and ‘Dollars Spent per Child’ in the ‘State_Spending_on_Kids’ dataset, by taking the rows with year values and assigning them to the year variable using common numbers in all of the years (0 and 1) and assigning their values to the ‘Dollars Spent per Child’ variable.
+The ‘Minimum_Wage’ dataset was already tidy in that I was not able to use pivot wider/longer to change anything the way I did with the first dataset, so I just deleted irrelevant columns (the footnotes, and a column with unclean data from the Dept. of Labor). I also arranged this dataset to match the first dataset with the state first and in alphabetical order.</p>
+<p>Part 2: Join Datasets</p>
+<pre class="r"><code>new_states &lt;- inner_join(new_State_Spending, new_Minimum_Wage, 
+    by = c(&quot;State&quot;, &quot;Year&quot;), all.x = TRUE)
+glimpse(new_states)</code></pre>
+<pre><code>## Rows: 1,020
+## Columns: 14
+## $ State                                               &lt;chr&gt; &quot;Alabama&quot;, &quot;Alaba…
+## $ Year                                                &lt;dbl&gt; 2000, 2001, 2002,…
+## $ Dollars_Spent_per_Child                             &lt;dbl&gt; 4598, 4651, 4742,…
+## $ State.Minimum.Wage                                  &lt;dbl&gt; 0.00, 0.00, 0.00,…
+## $ State.Minimum.Wage.2020.Dollars                     &lt;dbl&gt; 0.00, 0.00, 0.00,…
+## $ Federal.Minimum.Wage                                &lt;dbl&gt; 5.15, 5.15, 5.15,…
+## $ Federal.Minimum.Wage.2020.Dollars                   &lt;dbl&gt; 7.74, 7.52, 7.40,…
+## $ Effective.Minimum.Wage                              &lt;dbl&gt; 5.15, 5.15, 5.15,…
+## $ Effective.Minimum.Wage.2020.Dollars                 &lt;dbl&gt; 7.74, 7.52, 7.40,…
+## $ CPI.Average                                         &lt;dbl&gt; 172.200, 177.100,…
+## $ Department.Of.Labor.Cleaned.Low.Value               &lt;dbl&gt; 0.00, 0.00, 0.00,…
+## $ Department.Of.Labor.Cleaned.Low.Value.2020.Dollars  &lt;dbl&gt; 0.00, 0.00, 0.00,…
+## $ Department.Of.Labor.Cleaned.High.Value              &lt;dbl&gt; 0.00, 0.00, 0.00,…
+## $ Department.Of.Labor.Cleaned.High.Value.2020.Dollars &lt;dbl&gt; 0.00, 0.00, 0.00,…</code></pre>
+<pre class="r"><code>new_State_Spending %&gt;% nrow()</code></pre>
+<pre><code>## [1] 1020</code></pre>
+<pre class="r"><code>new_Minimum_Wage %&gt;% nrow()</code></pre>
+<pre><code>## [1] 2862</code></pre>
+<pre class="r"><code>new_states %&gt;% nrow()</code></pre>
+<pre><code>## [1] 1020</code></pre>
+<pre class="r"><code>2862 - 1020  #1842 observations lost; all from first dataset retained</code></pre>
+<pre><code>## [1] 1842</code></pre>
+<p>I conducted an inner join on the two datasets I am analyzing. I chose this type of join because the ‘Minimum_Wage’ dataset includes territories and extra years in comparison to the ‘State_Spending_on_Kids’ dataset and I only wanted to compare states. This resulted in 1842 observations dropped. The dropped cases could pose an issue in detecting patterns as it rids the dataset of more information that was available (in regards to years and location) that could have been used to identify trends, but I felt it was more beneficial to directly compare the years and areas available in both datasets. I joined the datasets using both states and years in common, I decided to retain the District of Columbia as it is the nation’s capitol and functions basically independently, and is on the mainland of the U.S.</p>
+<p>Part 3: Data Wrangling</p>
+<pre class="r"><code>new_states_1 &lt;- new_states %&gt;% group_by(State) %&gt;% summarize(avg_state_spending = mean(Dollars_Spent_per_Child)) %&gt;% 
+    arrange(desc(avg_state_spending))
+new_states_1 %&gt;% summarize(median(avg_state_spending))  #Median is $6020.40/child/year</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `median(avg_state_spending)`
+##                          &lt;dbl&gt;
+## 1                        6020.</code></pre>
+<pre class="r"><code>new_states_1 &lt;- new_states_1 %&gt;% mutate(median_state_spending = as.factor(avg_state_spending &gt; 
+    median(avg_state_spending)))  #Creating categorical variable
+
+new_states_2 &lt;- right_join(new_states, new_states_1, by = &quot;State&quot;)
+
+new_states_2 %&gt;% group_by(median_state_spending) %&gt;% summarize(mean(Effective.Minimum.Wage.2020.Dollars))  #above median, higher mean EMW</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   median_state_spending `mean(Effective.Minimum.Wage.2020.Dollars)`
+##   &lt;fct&gt;                                                       &lt;dbl&gt;
+## 1 FALSE                                                        7.87
+## 2 TRUE                                                         8.29</code></pre>
+<pre class="r"><code>new_states_2 %&gt;% group_by(median_state_spending) %&gt;% summarize(mean(State.Minimum.Wage.2020.Dollars))  #above median, higher mean SMW</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   median_state_spending `mean(State.Minimum.Wage.2020.Dollars)`
+##   &lt;fct&gt;                                                   &lt;dbl&gt;
+## 1 FALSE                                                    5.67
+## 2 TRUE                                                     8.09</code></pre>
+<pre class="r"><code>new_states_2 %&gt;% group_by(median_state_spending) %&gt;% mutate(avg_state_min_wage = mean(State.Minimum.Wage.2020.Dollars))  #New mean SMW variable</code></pre>
+<pre><code>## # A tibble: 1,020 x 17
+## # Groups:   median_state_spending [2]
+##    State  Year Dollars_Spent_p… State.Minimum.W… State.Minimum.W…
+##    &lt;chr&gt; &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Alab…  2000             4598                0                0
+##  2 Alab…  2001             4651                0                0
+##  3 Alab…  2002             4742                0                0
+##  4 Alab…  2003             4831                0                0
+##  5 Alab…  2004             4879                0                0
+##  6 Alab…  2005             5064                0                0
+##  7 Alab…  2006             5407                0                0
+##  8 Alab…  2007             5830                0                0
+##  9 Alab…  2008             6209                0                0
+## 10 Alab…  2009             6107                0                0
+## # … with 1,010 more rows, and 12 more variables: Federal.Minimum.Wage &lt;dbl&gt;,
+## #   Federal.Minimum.Wage.2020.Dollars &lt;dbl&gt;, Effective.Minimum.Wage &lt;dbl&gt;,
+## #   Effective.Minimum.Wage.2020.Dollars &lt;dbl&gt;, CPI.Average &lt;dbl&gt;,
+## #   Department.Of.Labor.Cleaned.Low.Value &lt;dbl&gt;,
+## #   Department.Of.Labor.Cleaned.Low.Value.2020.Dollars &lt;dbl&gt;,
+## #   Department.Of.Labor.Cleaned.High.Value &lt;dbl&gt;,
+## #   Department.Of.Labor.Cleaned.High.Value.2020.Dollars &lt;dbl&gt;,
+## #   avg_state_spending &lt;dbl&gt;, median_state_spending &lt;fct&gt;,
+## #   avg_state_min_wage &lt;dbl&gt;</code></pre>
+<pre class="r"><code>new_states_2 %&gt;% group_by(median_state_spending) %&gt;% summarize(sd(State.Minimum.Wage.2020.Dollars))  #below the median, greater variance SMW</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   median_state_spending `sd(State.Minimum.Wage.2020.Dollars)`
+##   &lt;fct&gt;                                                 &lt;dbl&gt;
+## 1 FALSE                                                  3.42
+## 2 TRUE                                                   1.27</code></pre>
+<pre class="r"><code>new_states_2 %&gt;% group_by(State) %&gt;% summarize(sd = sd(State.Minimum.Wage)) %&gt;% 
+    arrange(desc(sd))  #Arizona</code></pre>
+<pre><code>## # A tibble: 51 x 2
+##    State                   sd
+##    &lt;chr&gt;                &lt;dbl&gt;
+##  1 Arizona               3.86
+##  2 Florida               3.78
+##  3 Kansas                2.25
+##  4 Ohio                  2.16
+##  5 District of Columbia  1.60
+##  6 Wyoming               1.58
+##  7 Texas                 1.56
+##  8 New York              1.53
+##  9 Washington            1.50
+## 10 New Mexico            1.49
+## # … with 41 more rows</code></pre>
+<pre class="r"><code>new_states_2 %&gt;% group_by(State) %&gt;% summarize(mean = mean(State.Minimum.Wage)) %&gt;% 
+    arrange(desc(mean))  #Oregon</code></pre>
+<pre><code>## # A tibble: 51 x 2
+##    State                 mean
+##    &lt;chr&gt;                &lt;dbl&gt;
+##  1 Oregon                7.63
+##  2 Washington            7.61
+##  3 District of Columbia  7.42
+##  4 Connecticut           7.33
+##  5 Vermont               7.25
+##  6 Massachusetts         7.24
+##  7 California            7.22
+##  8 Alaska                7.04
+##  9 Rhode Island          6.93
+## 10 Illinois              6.76
+## # … with 41 more rows</code></pre>
+<pre class="r"><code>new_states_2 %&gt;% select(Effective.Minimum.Wage, Federal.Minimum.Wage) %&gt;% 
+    filter(Effective.Minimum.Wage == Federal.Minimum.Wage) %&gt;% 
+    summarize(n())  #Federal Min Wage being enforced 678 times</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `n()`
+##   &lt;int&gt;
+## 1   678</code></pre>
+<pre class="r"><code>new_states_2 %&gt;% filter(Effective.Minimum.Wage == Federal.Minimum.Wage) %&gt;% 
+    summarize_all(n_distinct)  #45 different states, the FMW only changed 5x</code></pre>
+<pre><code>## # A tibble: 1 x 16
+##   State  Year Dollars_Spent_p… State.Minimum.W… State.Minimum.W…
+##   &lt;int&gt; &lt;int&gt;            &lt;int&gt;            &lt;int&gt;            &lt;int&gt;
+## 1    45    20              629               20              122
+## # … with 11 more variables: Federal.Minimum.Wage &lt;int&gt;,
+## #   Federal.Minimum.Wage.2020.Dollars &lt;int&gt;, Effective.Minimum.Wage &lt;int&gt;,
+## #   Effective.Minimum.Wage.2020.Dollars &lt;int&gt;, CPI.Average &lt;int&gt;,
+## #   Department.Of.Labor.Cleaned.Low.Value &lt;int&gt;,
+## #   Department.Of.Labor.Cleaned.Low.Value.2020.Dollars &lt;int&gt;,
+## #   Department.Of.Labor.Cleaned.High.Value &lt;int&gt;,
+## #   Department.Of.Labor.Cleaned.High.Value.2020.Dollars &lt;int&gt;,
+## #   avg_state_spending &lt;int&gt;, median_state_spending &lt;int&gt;</code></pre>
+<pre class="r"><code>cormat &lt;- new_states_2 %&gt;% select_if(is.numeric) %&gt;% cor(use = &quot;pair&quot;)
+tidycor &lt;- cormat %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;var1&quot;) %&gt;% 
+    pivot_longer(-1, names_to = &quot;var2&quot;, values_to = &quot;correlation&quot;)
+tidycor</code></pre>
+<pre><code>## # A tibble: 196 x 3
+##    var1  var2                                  correlation
+##    &lt;chr&gt; &lt;chr&gt;                                       &lt;dbl&gt;
+##  1 Year  Year                                        1    
+##  2 Year  Dollars_Spent_per_Child                     0.376
+##  3 Year  State.Minimum.Wage                          0.428
+##  4 Year  State.Minimum.Wage.2020.Dollars             0.157
+##  5 Year  Federal.Minimum.Wage                        0.900
+##  6 Year  Federal.Minimum.Wage.2020.Dollars           0.233
+##  7 Year  Effective.Minimum.Wage                      0.842
+##  8 Year  Effective.Minimum.Wage.2020.Dollars         0.298
+##  9 Year  CPI.Average                                 0.995
+## 10 Year  Department.Of.Labor.Cleaned.Low.Value       0.428
+## # … with 186 more rows</code></pre>
+<p>In this section, I conducted various types of summarizing with the newly joined dataset, even creating another dataset and conducting a right join with mean values for state spending on child education as well as a categorical variable (T/F) for whether or not the state falls above the median value for state spending on child education. The median dollar amount states spent on average in the US on public child education is $6020.40 per child per year.States above the median value for money spent toward children’s public education also had higher values for both Effective Minimum Wage and State Minimum Wage values on average.States below the median value for money spent toward children’s public education had greater variance in State Minumum Wage values on average. Arizona had the greatest variance in State Minimum Wage values, while Oregon had the greatest mean State Minimum Wage value.
+I also found that the occurrence of Federal Minimum Wage being enforced because it is higher than or equal to the State Minimum Wage value has been recorded 678 times according to this dataset. This has happened in 45 different states, while the Federal Minimum Wage itself has only changed 5 times during this period. I created a correlation matrix in the form of a datasframe as well to view the relationship between the different variables.</p>
+<p>Part 4: Visualizing</p>
+<pre class="r"><code># Correlation Heatmap
+heatmap &lt;- new_states_2 %&gt;% select_if(is.numeric) %&gt;% cor %&gt;% 
+    as.data.frame %&gt;% rownames_to_column %&gt;% pivot_longer(-1) %&gt;% 
+    ggplot(aes(rowname, name, fill = value)) + geom_tile() + 
+    geom_text(aes(label = round(value, 2))) + xlab(&quot;&quot;) + ylab(&quot;&quot;) + 
+    theme(axis.text.x = element_text(size = 6, angle = 90, hjust = 1), 
+        axis.text.y = element_text(size = 6)) + coord_fixed()
+
+heatmap</code></pre>
+<p><img src="../../project/Project1DataAnalysis_files/figure-html/heatmap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>The heatmap created demonstrates a positive relationship between all of the variables analyzed. It also shows that there is a stronger relationship between the variables related to minimum wage than the relationship between spending for children’s education and minimum wage (as I originally hypothesized). However, there is still a correlation between the money spent by states on education and their minimum wage values, it just is not as strong as I had originally theorized.</p>
+<pre class="r"><code># Plot 1
+plot1 &lt;- new_states_2 %&gt;% ggplot(aes(x = State.Minimum.Wage.2020.Dollars, 
+    y = Federal.Minimum.Wage.2020.Dollars, color = median_state_spending, 
+    group = median_state_spending)) + geom_point(aes(color = median_state_spending)) + 
+    geom_line() + ggtitle(&quot;Minimum Wage by State vs Federal Minimum Wage in the US&quot;) + 
+    xlab(&quot;State Minimum Wage (in 2020 dollars)&quot;) + ylab(&quot;Federal Minimum Wage (in 2020 dollars)&quot;)
+
+plot1</code></pre>
+<p><img src="../../project/Project1DataAnalysis_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This graph illustrates State Minimum Wage vs Federal Minimum Wage colored by whether or not the state was above the median value for money spent on public education in the U.S. This graph shows that the states that did place above the median in money spent seem to have higher values for State Minimum Wage than the states that did not. It also shows that there is a wider values for minimum wage (variance) in states that place below the median for money spent on public education than those that are above the median line. I aimed to be able to distinguish between the Federal Minimum Wage value and the State Minimum Wage value to tell which was enforced based on the vertical lengths of the lines, but it is a little bit difficult to tell in that they look quite similar for both colors groups.</p>
+<pre class="r"><code># Plot 2
+plot2 &lt;- new_states_2 %&gt;% ggplot(aes(x = State, y = Dollars_Spent_per_Child, 
+    fill = Effective.Minimum.Wage.2020.Dollars)) + geom_bar(position = &quot;stack&quot;, 
+    stat = &quot;summary&quot;) + geom_errorbar(stat = &quot;summary&quot;) + theme(axis.text.x = element_text(size = 8, 
+    angle = 90, hjust = 1)) + ggtitle(&quot;State Spending on Public Education per Child in the U.S.&quot;) + 
+    xlab(&quot;State&quot;) + ylab(&quot;Dollars Spent per Child (adjusted for inflation)&quot;) + 
+    scale_y_continuous(limits = c(0, 10000))
+
+plot2</code></pre>
+<p><img src="../../project/Project1DataAnalysis_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" />
+This plot shows the dollars spent on public education per child, categorized by state in the U.S., including D.C. It shows that the District of Columbia does spend the most on children’s public education overall, and Utah seems to spend the least. D.C.’s value also seems to have the greatest uncertainty as well. The graph also analyzes the Effective Minimum Wage in each state, showing that most states tend to be around 7-8 dollars, while there are a few states that have values much higher, and those states do not seem to spend more on children’s education, but they do not spend the least either, they seem to rank in the middle.</p>
+<p>Part 5: Dimensionality Reduction (PCA)</p>
+<pre class="r"><code>states_nums &lt;- new_states_2 %&gt;% select_if(is.numeric) %&gt;% scale
+rownames(states_nums) &lt;- new_states_2$State
+states_pca &lt;- princomp(states_nums)
+names(states_pca)</code></pre>
+<pre><code>## [1] &quot;sdev&quot;     &quot;loadings&quot; &quot;center&quot;   &quot;scale&quot;    &quot;n.obs&quot;    &quot;scores&quot;   &quot;call&quot;</code></pre>
+<pre class="r"><code>summary(states_pca, loadings = T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2    Comp.3     Comp.4    Comp.5
+## Standard deviation     2.7697291 1.7351504 1.2251560 1.05894180 0.7074486
+## Proportion of Variance 0.5484948 0.2152644 0.1073200 0.08017558 0.0357839
+## Cumulative Proportion  0.5484948 0.7637593 0.8710793 0.95125487 0.9870388
+##                            Comp.6      Comp.7      Comp.8       Comp.9
+## Standard deviation     0.29965854 0.253757184 0.141306557 0.0717454424
+## Proportion of Variance 0.00642024 0.004603993 0.001427653 0.0003680329
+## Cumulative Proportion  0.99345901 0.998063002 0.999490655 0.9998586877
+##                             Comp.10      Comp.11      Comp.12 Comp.13 Comp.14
+## Standard deviation     3.670962e-02 2.009784e-02 1.499710e-02       0       0
+## Proportion of Variance 9.635133e-05 2.887997e-05 1.608099e-05       0       0
+## Cumulative Proportion  9.999550e-01 9.999839e-01 1.000000e+00       1       1
+## 
+## Loadings:
+##                                                     Comp.1 Comp.2 Comp.3 Comp.4
+## Year                                                 0.214  0.422         0.299
+## Dollars_Spent_per_Child                              0.212        -0.625  0.127
+## State.Minimum.Wage                                   0.343 -0.133  0.123       
+## State.Minimum.Wage.2020.Dollars                      0.308 -0.280  0.123       
+## Federal.Minimum.Wage                                 0.220  0.439              
+## Federal.Minimum.Wage.2020.Dollars                    0.110  0.228        -0.746
+## Effective.Minimum.Wage                               0.286  0.311              
+##                                                     Comp.5 Comp.6 Comp.7 Comp.8
+## Year                                                               0.150  0.145
+## Dollars_Spent_per_Child                              0.167        -0.710       
+## State.Minimum.Wage                                         -0.302        -0.403
+## State.Minimum.Wage.2020.Dollars                            -0.272         0.385
+## Federal.Minimum.Wage                                 0.244                     
+## Federal.Minimum.Wage.2020.Dollars                    0.478                     
+## Effective.Minimum.Wage                              -0.377                     
+##                                                     Comp.9 Comp.10 Comp.11
+## Year                                                 0.799                
+## Dollars_Spent_per_Child                                                   
+## State.Minimum.Wage                                                        
+## State.Minimum.Wage.2020.Dollars                                           
+## Federal.Minimum.Wage                                -0.284  0.166  -0.749 
+## Federal.Minimum.Wage.2020.Dollars                    0.117          0.343 
+## Effective.Minimum.Wage                              -0.166 -0.802         
+##                                                     Comp.12 Comp.13 Comp.14
+## Year                                                                       
+## Dollars_Spent_per_Child                                                    
+## State.Minimum.Wage                                   0.293  -0.299   0.641 
+## State.Minimum.Wage.2020.Dollars                     -0.283   0.641   0.299 
+## Federal.Minimum.Wage                                                       
+## Federal.Minimum.Wage.2020.Dollars                                          
+## Effective.Minimum.Wage                                                     
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 7 rows ]</code></pre>
+<pre class="r"><code>eigval &lt;- states_pca$sdev^2
+varprop = round(eigval/sum(eigval), 2)  #proportion of variance explained by each PC
+
+round(cumsum(eigval)/sum(eigval), 2)  #cumulative proportion of variance</code></pre>
+<pre><code>##  Comp.1  Comp.2  Comp.3  Comp.4  Comp.5  Comp.6  Comp.7  Comp.8  Comp.9 Comp.10 
+##    0.55    0.76    0.87    0.95    0.99    0.99    1.00    1.00    1.00    1.00 
+## Comp.11 Comp.12 Comp.13 Comp.14 
+##    1.00    1.00    1.00    1.00</code></pre>
+<pre class="r"><code>eigval  #eigenvalues</code></pre>
+<pre><code>##       Comp.1       Comp.2       Comp.3       Comp.4       Comp.5       Comp.6 
+## 7.6713995388 3.0107470829 1.5010073337 1.1213577302 0.5004834896 0.0897952422 
+##       Comp.7       Comp.8       Comp.9      Comp.10      Comp.11      Comp.12 
+## 0.0643927084 0.0199675429 0.0051474085 0.0013475961 0.0004039232 0.0002249131 
+##      Comp.13      Comp.14 
+## 0.0000000000 0.0000000000</code></pre>
+<pre class="r"><code>statesdf &lt;- data.frame(State = new_states_2$State, PC1 = states_pca$scores[, 
+    1], PC2 = states_pca$scores[, 2])
+ggplot(statesdf, aes(PC1, PC2, color = State)) + geom_point()</code></pre>
+<p><img src="../../project/Project1DataAnalysis_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># highest on PC1
+states_pca$scores[, 1:4] %&gt;% as.data.frame %&gt;% top_n(3, Comp.1)</code></pre>
+<pre><code>##                           Comp.1    Comp.2    Comp.3     Comp.4
+## District.of.Columbia.14 6.793115 0.5605903 -5.118039 -0.1343190
+## District.of.Columbia.15 8.154411 0.4804461 -5.087239 -0.5738404
+## District.of.Columbia.16 9.474988 0.4484006 -5.194391 -0.7573850</code></pre>
+<pre class="r"><code># new_states_2 %&gt;% filter(State%in%c(&#39;District of Columbia&#39;))
+
+# lowest PC1
+states_pca$scores[, 1:4] %&gt;% as.data.frame %&gt;% top_n(-3, Comp.1)</code></pre>
+<pre><code>##                   Comp.1    Comp.2     Comp.3    Comp.4
+## Arizona.17     -6.442087 0.7011545 -0.1600623 -1.268721
+## Mississippi.17 -6.436897 0.6596927 -0.2326042 -1.294706
+## Tennessee.17   -6.377221 0.6500627 -0.4301326 -1.270142</code></pre>
+<pre class="r"><code># new_states_2 %&gt;% filter(State%in%c(&#39;Arizona&#39;,
+# &#39;Mississippi&#39;, &#39;Tennessee&#39;))
+
+# highest on PC2
+states_pca$scores[, 1:4] %&gt;% as.data.frame %&gt;% top_n(3, wt = Comp.2)</code></pre>
+<pre><code>##                   Comp.1   Comp.2     Comp.3    Comp.4
+## Alabama.16     -3.598955 5.092636 -0.8340805 0.1976214
+## Mississippi.16 -3.681522 5.141837 -0.5118875 0.1884695
+## Tennessee.16   -3.680345 5.126009 -0.5370980 0.1781290</code></pre>
+<pre class="r"><code># new_states_2 %&gt;% filter(State%in%c(&#39;Alabama&#39;,
+# &#39;Mississippi&#39;, &#39;Tennessee&#39;))
+
+# lowest on PC2
+states_pca$scores[, 1:4] %&gt;% as.data.frame %&gt;% top_n(3, wt = desc(Comp.2))</code></pre>
+<pre><code>##                             Comp.1    Comp.2    Comp.3    Comp.4
+## Alaska.17               -0.2925963 -2.837428 -1.631577 -1.126900
+## District.of.Columbia.17  0.7002613 -3.332284 -2.626768 -1.682847
+## District.of.Columbia.18  1.6146360 -2.906613 -2.822053 -2.463458</code></pre>
+<pre class="r"><code># new_states_2 %&gt;% filter(State%in%c(&#39;Alaska&#39;, &#39;District of
+# Columbia&#39;))
+
+states_pca$loadings[1:7, 1:2] %&gt;% as.data.frame %&gt;% rownames_to_column %&gt;% 
+    ggplot() + geom_hline(aes(yintercept = 0), lty = 2) + geom_vline(aes(xintercept = 0), 
+    lty = 2) + ylab(&quot;PC2&quot;) + xlab(&quot;PC1&quot;) + geom_segment(aes(x = 0, 
+    y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(), col = &quot;red&quot;) + 
+    geom_label(aes(x = Comp.1 * 1.1, y = Comp.2 * 1.1, label = rowname))</code></pre>
+<p><img src="../../project/Project1DataAnalysis_files/figure-html/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>I ran Principal Components Analysis (PCA) on the dataset to determine the correlation and variance between the different variables. District of Columbia had the top three highest PC1 scores, while the lowest scores were Arizona, Mississippi, and Tennessee. Alaska and the District of Columbia had the lowest PC2 scores, while Alabama, Mississippi, and Tennessee had the highest. This indicates that the District of Columbia had the strongest portfolio regarding minimum wage for workers and money spent for children.</p>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

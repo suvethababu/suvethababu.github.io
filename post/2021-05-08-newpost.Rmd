@@ -1,0 +1,20 @@
+---
+title: NewPost
+author: ''
+date: '2021-05-08'
+slug: newpost
+categories: []
+tags: []
+description: ''
+---
+sakjdfhskjhfsjak;djnsvgsl;adffd
+
+[Link to project 1](/project/project1/)
+
+[Link to google](https://www.google.com)
+
+```{r}
+#insert R code
+```
+
+

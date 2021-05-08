@@ -1,0 +1,210 @@
+---
+title: "SDS 348 Project 1: Exploratory Data Analysis"
+author: "Suvetha Babu"
+date: "4/4/2021"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+  pdf_document:
+    toc: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+
+
+Introduction:
+
+  I chose two datasets, one with data on public spending on education per child in each state and another describing minimum wage in the US by state. I thought it would be interesting to study the state-by-state differences in educational spending as I work with children in the education field and hope to go into research regarding children as well. I also believe there will be a relation between the minimum wage of each state and the amount of money they spend for public education per child as states that do not have higher levels spending for wage may also not be willing to spend more toward education. I also feel it is an important relationship to study as children who learn in environments with less money alloted to them, come out of those environments and are not afforded as much pay as well, which leads to a lesser standard of living on top of the probable lesser standard of education upheld in their youth.
+
+  The 'State_Spending_on_Kids' dataset includes the dollar amount spent on public education per child ages 0-18 every year in each state and territory in the U.S. from the years 1997 to 2016, adjusted for inflation. The variables are the state and each of the years. The 'Minimum_Wage' dataset describes the minimum wage in the U.S. by state from the years 1968 to 2017. The variables include the state, the year, the state's minimum wage, the minimum wage adjusted to 2020 dollars, federal minimum wage that year, effective minimum age (if the federal minimum wage is higher than the state minimum wage than that takes effect instead of what the state sets), effective minimum wage in 2020 dollars. There are other variables as well such as 'CPI.Average' (Consumer Price Index Average) in that year, 'Department.Of.Labor.Cleaned.Low.Value' which denotes the states lowest enforced minimum wage value, there is also a variable for this value in 2020 dollars, and a 'Department.Of.Labor.Cleaned.High.Value' which is the higher enforced minimum value by the state which is the same as the low value in states with only one minimum wage (and a variable for this value in 2020 dollars).
+
+
+
+
+
+Part 1: Tidying Datasets
+
+```{r}
+library(tidyverse)
+library(dplyr)
+
+#dataset 1
+#State Spending on Kids dataset
+library(readr)
+State_Spending_on_Kids <- read_csv("State_Spending_on_Kids.csv")
+
+#dataset 2
+#Minimum Wage dataset
+library(readr)
+Minimum_Wage <- read_csv("Minimum_Wage_Data.csv")
+
+glimpse(State_Spending_on_Kids)
+
+glimpse(Minimum_Wage)
+
+#Reading in and briefly viewing original datasets
+```
+
+```{r}
+new_State_Spending <- State_Spending_on_Kids %>% pivot_longer(contains(c("0","1")), names_to= "Year", values_to = "Dollars_Spent_per_Child") %>% rename(State = state)
+new_State_Spending$Year <- as.numeric(as.character(new_State_Spending$Year)) #changed Year column from character to numeric
+glimpse(new_State_Spending)
+
+new_Minimum_Wage <- Minimum_Wage %>% select(-Footnote,-Department.Of.Labor.Uncleaned.Data) %>% select(State, everything()) %>% arrange(State)
+glimpse(new_Minimum_Wage)
+```
+
+I created separate variables for 'Year' and 'Dollars Spent per Child' in the 'State_Spending_on_Kids' dataset, by taking the rows with year values and assigning them to the year variable using common numbers in all of the years (0 and 1) and assigning their values to the 'Dollars Spent per Child' variable.
+The 'Minimum_Wage' dataset was already tidy in that I was not able to use pivot wider/longer to change anything the way I did with the first dataset, so I just deleted irrelevant columns (the footnotes, and a column with unclean data from the Dept. of Labor). I also arranged this dataset to match the first dataset with the state first and in alphabetical order.
+
+
+
+
+
+Part 2: Join Datasets
+
+```{r}
+new_states <- inner_join(new_State_Spending, new_Minimum_Wage, by = c("State", "Year"), all.x = TRUE)
+glimpse(new_states)
+
+new_State_Spending %>% nrow()
+new_Minimum_Wage %>% nrow()
+new_states %>% nrow()
+2862-1020 #1842 observations lost; all from first dataset retained
+```
+
+I conducted an inner join on the two datasets I am analyzing. I chose this type of join because the 'Minimum_Wage' dataset includes territories and extra years in comparison to the 'State_Spending_on_Kids' dataset and I only wanted to compare states. This resulted in 1842 observations dropped. The dropped cases could pose an issue in detecting patterns as it rids the dataset of more information that was available (in regards to years and location) that could have been used to identify trends, but I felt it was more beneficial to directly compare the years and areas available in both datasets. I joined the datasets using both states and years in common, I decided to retain the District of Columbia as it is the nation's capitol and functions basically independently, and is on the mainland of the U.S.
+
+
+
+
+Part 3: Data Wrangling
+
+```{r}
+
+new_states_1 <- new_states %>% group_by(State) %>% summarize(avg_state_spending = mean(Dollars_Spent_per_Child)) %>% arrange(desc(avg_state_spending))
+new_states_1 %>% summarize(median(avg_state_spending)) #Median is $6020.40/child/year
+new_states_1 <- new_states_1 %>% mutate(median_state_spending = as.factor(avg_state_spending > median(avg_state_spending))) #Creating categorical variable
+
+new_states_2 <- right_join(new_states, new_states_1, by = "State")
+
+new_states_2 %>% group_by(median_state_spending) %>% summarize(mean(Effective.Minimum.Wage.2020.Dollars)) #above median, higher mean EMW
+
+new_states_2 %>% group_by(median_state_spending) %>% summarize(mean(State.Minimum.Wage.2020.Dollars))#above median, higher mean SMW
+
+new_states_2 %>% group_by(median_state_spending) %>% mutate(avg_state_min_wage = mean(State.Minimum.Wage.2020.Dollars)) #New mean SMW variable
+
+new_states_2 %>% group_by(median_state_spending) %>% summarize(sd(State.Minimum.Wage.2020.Dollars)) #below the median, greater variance SMW
+
+new_states_2 %>% group_by(State) %>% summarize(sd = sd(State.Minimum.Wage)) %>% arrange(desc(sd)) #Arizona
+
+new_states_2 %>% group_by(State) %>% summarize(mean = mean(State.Minimum.Wage)) %>% arrange(desc(mean)) #Oregon
+
+new_states_2 %>% select(Effective.Minimum.Wage, Federal.Minimum.Wage) %>% filter(Effective.Minimum.Wage == Federal.Minimum.Wage) %>% summarize(n()) #Federal Min Wage being enforced 678 times
+new_states_2 %>% filter(Effective.Minimum.Wage == Federal.Minimum.Wage) %>% summarize_all(n_distinct) #45 different states, the FMW only changed 5x
+
+cormat <- new_states_2 %>% select_if(is.numeric) %>% cor(use="pair")
+tidycor <- cormat %>% as.data.frame %>% rownames_to_column("var1") %>% pivot_longer(-1,names_to="var2",values_to="correlation")
+tidycor
+
+```
+
+In this section, I conducted various types of summarizing with the newly joined dataset, even creating another dataset and conducting a right join with mean values for state spending on child education as well as a categorical variable (T/F) for whether or not the state falls above the median value for state spending on child education. The median dollar amount states spent on average in the US on public child education is $6020.40 per child per year.States above the median value for money spent toward children's public education also had higher values for both Effective Minimum Wage and State Minimum Wage values on average.States below the median value for money spent toward children's public education had greater variance in State Minumum Wage values on average. Arizona had the greatest variance in State Minimum Wage values, while Oregon had the greatest mean State Minimum Wage value.
+I also found that the occurrence of Federal Minimum Wage being enforced because it is higher than or equal to the State Minimum Wage value has been recorded 678 times according to this dataset. This has happened in 45 different states, while the Federal Minimum Wage itself has only changed 5 times during this period. I created a correlation matrix in the form of a datasframe as well to view the relationship between the different variables.
+
+
+
+
+Part 4: Visualizing
+
+```{r heatmap, fig.width=10}
+#Correlation Heatmap
+heatmap <- new_states_2 %>% select_if(is.numeric) %>% cor %>% as.data.frame %>% rownames_to_column %>% pivot_longer(-1) %>% ggplot(aes(rowname,name,fill=value))+geom_tile()+  geom_text(aes(label=round(value,2))) + xlab("")+ ylab("") + theme(axis.text.x = element_text(size = 6, angle = 90, hjust=1), axis.text.y = element_text(size = 6)) + coord_fixed()
+
+heatmap
+```
+
+The heatmap created demonstrates a positive relationship between all of the variables analyzed. It also shows that there is a stronger relationship between the variables related to minimum wage than the relationship between spending for children's education and minimum wage (as I originally hypothesized). However, there is still a correlation between the money spent by states on education and their minimum wage values, it just is not as strong as I had originally theorized.
+
+
+```{r}
+#Plot 1
+plot1 <- new_states_2 %>% ggplot(aes(x = State.Minimum.Wage.2020.Dollars, y = Federal.Minimum.Wage.2020.Dollars, color = median_state_spending, group = median_state_spending)) + geom_point(aes(color = median_state_spending)) + geom_line() + ggtitle("Minimum Wage by State vs Federal Minimum Wage in the US") + xlab("State Minimum Wage (in 2020 dollars)") + ylab("Federal Minimum Wage (in 2020 dollars)")
+
+plot1
+```
+
+This graph illustrates State Minimum Wage vs Federal Minimum Wage colored by whether or not the state was above the median value for money spent on public education in the U.S. This graph shows that the states that did place above the median in money spent seem to have higher values for State Minimum Wage than the states that did not. It also shows that there is a wider values for minimum wage (variance) in states that place below the median for money spent on public education than those that are above the median line. I aimed to be able to distinguish between the Federal Minimum Wage value and the State Minimum Wage value to tell which was enforced based on the vertical lengths of the lines, but it is a little bit difficult to tell in that they look quite similar for both colors groups. 
+
+
+```{r}
+#Plot 2
+plot2 <- new_states_2 %>% ggplot(aes(x = State, y = Dollars_Spent_per_Child, fill = Effective.Minimum.Wage.2020.Dollars)) + geom_bar(position="stack", stat="summary") + geom_errorbar(stat = "summary") + theme(axis.text.x = element_text(size = 8, angle = 90, hjust=1)) + ggtitle("State Spending on Public Education per Child in the U.S.") + xlab("State") + ylab("Dollars Spent per Child (adjusted for inflation)") + scale_y_continuous(limits = c(0, 10000))
+
+plot2
+
+```
+This plot shows the dollars spent on public education per child, categorized by state in the U.S., including D.C. It shows that the District of Columbia does spend the most on children's public education overall, and Utah seems to spend the least. D.C.'s value also seems to have the greatest uncertainty as well. The graph also analyzes the Effective Minimum Wage in each state, showing that most states tend to be around 7-8 dollars, while there are a few states that have values much higher, and those states do not seem to spend more on children's education, but they do not spend the least either, they seem to rank in the middle. 
+
+
+
+
+Part 5: Dimensionality Reduction (PCA)
+
+```{r}
+states_nums <- new_states_2 %>% select_if(is.numeric) %>% scale
+rownames(states_nums) <- new_states_2$State
+states_pca <- princomp(states_nums)
+names(states_pca)
+
+summary(states_pca, loadings=T)
+
+eigval<-states_pca$sdev^2 
+varprop=round(eigval/sum(eigval), 2) #proportion of variance explained by each PC
+
+round(cumsum(eigval)/sum(eigval), 2) #cumulative proportion of variance
+eigval #eigenvalues
+
+statesdf<-data.frame(State=new_states_2$State, PC1=states_pca$scores[, 1],PC2=states_pca$scores[, 2])
+ggplot(statesdf, aes(PC1, PC2, color = State)) + geom_point()
+
+#highest on PC1
+states_pca$scores[,1:4] %>% as.data.frame %>% top_n(3, Comp.1)
+#new_states_2 %>% filter(State%in%c("District of Columbia"))
+
+#lowest PC1
+states_pca$scores[,1:4] %>% as.data.frame %>% top_n(-3, Comp.1)
+#new_states_2 %>% filter(State%in%c("Arizona", "Mississippi", "Tennessee"))
+
+#highest on PC2
+states_pca$scores[,1:4] %>% as.data.frame %>% top_n(3, wt=Comp.2)
+#new_states_2 %>% filter(State%in%c("Alabama", "Mississippi", "Tennessee"))
+
+#lowest on PC2
+states_pca$scores[,1:4] %>% as.data.frame %>% top_n(3, wt=desc(Comp.2))
+#new_states_2 %>% filter(State%in%c("Alaska", "District of Columbia"))
+
+states_pca$loadings[1:7, 1:2] %>% as.data.frame %>% rownames_to_column %>%
+ggplot() + geom_hline(aes(yintercept=0), lty=2) +
+geom_vline(aes(xintercept=0), lty=2) + ylab("PC2") + xlab("PC1") +
+geom_segment(aes(x=0, y=0, xend=Comp.1, yend=Comp.2), arrow=arrow(), col="red") +
+geom_label(aes(x=Comp.1*1.1, y=Comp.2*1.1, label=rowname))
+
+
+```
+
+I ran Principal Components Analysis (PCA) on the dataset to determine the correlation and variance between the different variables. District of Columbia had the top three highest PC1 scores, while the lowest scores were Arizona, Mississippi, and Tennessee. Alaska and the District of Columbia had the lowest PC2 scores, while Alabama, Mississippi, and Tennessee had the highest. This indicates that the District of Columbia had the strongest portfolio regarding minimum wage for workers and money spent for children.
+
+```{R, echo=F}
+
+```
+
+
+
+
