@@ -1,0 +1,113 @@
+---
+title: Python Post
+author: ''
+date: '2021-05-08'
+slug: newpost
+categories: []
+tags: []
+description: ''
+---
+
+There are actually quite a lot of interesting things that can be done with Python (the language, not an actual python...).
+
+You can create lists of animal names. Or groceries. Or whatever you want really, but we can do animals here as an example.
+
+```{python}
+animals = ["Orca", "Wolf", "Gecko"]
+```
+
+Within the same list we manipulate it however we want without having to go back and rewrite an entirely new list. 
+
+```{python}
+
+#Changing wolf to dog in animals list
+animals[1] = "Dog" 
+
+#Adding puma and jaguar to end of list
+animals.extend(["Puma", "Jaguar"]) 
+
+print(animals)
+
+```
+
+You can also index from the list, to only get specific values similar to R, but unlike R (which starts with a base of 1) Python's first index is 0, which is important to note when indexing.
+
+```{python}
+#Adding cats from animals list to cats variable
+cats = animals[3:5] #Default step is one, so not specified
+
+print(cats)
+```
+
+
+Arguably the single-most important tool in Python is numpy. You can use numpy to perform basically all of the mathematical functions without which Python is kind of well useless. At least for data science anyway. And math, clearly. Well, probably many other fields too.
+
+Here we can create 101 values and find y(x) = x^2 + sin(x) for each value. 
+
+```{python}
+
+import numpy as np
+
+#Creating 101 equally-spaced x values between -10 and 10
+x = np.linspace(-10, 10, num = 101, endpoint = True)
+
+y = x**2 + np.sin(x)
+
+```
+
+Now we can plot the x and y we found above using matplotlib, the extremely useful Python package for graphing.
+
+```{python}
+
+#py_install("matplotlib")
+#import matplotlib.pyplot as plt
+#plt.plot(x, y)
+#plt.xlabel("x")
+#plt.ylabel("y");
+
+```
+
+
+We can also put the x and y values we just found into a dataframe using pandas, another package used for data manipulation.
+
+```{python}
+
+
+import pandas as pd 
+
+#Putting x and y arrays into dataframe & naming columns
+df = pd.DataFrame({'x': x, 'y': y})
+
+#Printing first five points in dataframe
+df.head(5)
+
+```
+
+
+Okay! As interesting as all of that was, I honestly prefer R to Python because it's a lot easier to visualize things and usually just in terms of user-friendliness in general. However, there is a way for R and Python to communicate with one another - using the 'reticulate' package in R. 
+
+```{R}
+#R code chunk
+library(reticulate)
+hi<-"Hello"
+```
+
+```{python}
+#Python code chunk
+hi="world"
+print(r.hi,hi) #access R-defined objects with r.
+```
+
+```{R}
+#R code chunk
+cat(c(hi,py$hi)) #access Python-defined objects with py$
+
+```
+
+It's really useful and actually pretty simple!
+
+
+Enjoy this stock photo of a python LOL:
+![](~/website/static/img/pyth.png)
+
+

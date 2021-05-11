@@ -8,15 +8,14 @@
     <language>en-US</language>
     <lastBuildDate>Sat, 08 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>NewPost</title>
+      <title>Python Post</title>
       <link>/post/2021/05/08/newpost/</link>
       <pubDate>Sat, 08 May 2021 00:00:00 +0000</pubDate>
       
       <guid>/post/2021/05/08/newpost/</guid>
-      <description> sakjdfhskjhfsjak;djnsvgsl;adffd
-Link to project 1
-Link to google
-#insert R code </description>
+      <description>There are actually quite a lot of interesting things that can be done with Python (the language, not an actual python…).
+You can create lists of animal names. Or groceries. Or whatever you want really, but we can do animals here as an example.
+animals = [&amp;quot;Orca&amp;quot;, &amp;quot;Wolf&amp;quot;, &amp;quot;Gecko&amp;quot;] Within the same list we manipulate it however we want without having to go back and rewrite an entirely new list.</description>
     </item>
     
     <item>
