@@ -19,7 +19,6 @@ animals = ["Orca", "Wolf", "Gecko"]
 Within the same list we manipulate it however we want without having to go back and rewrite an entirely new list. 
 
 ```{python}
-
 #Changing wolf to dog in animals list
 animals[1] = "Dog" 
 
@@ -45,7 +44,6 @@ Arguably the single-most important tool in Python is numpy. You can use numpy to
 Here we can create 101 values and find y(x) = x^2 + sin(x) for each value. 
 
 ```{python}
-
 import numpy as np
 
 #Creating 101 equally-spaced x values between -10 and 10
@@ -58,7 +56,6 @@ y = x**2 + np.sin(x)
 Now we can plot the x and y we found above using matplotlib, the extremely useful Python package for graphing.
 
 ```{python}
-
 #py_install("matplotlib")
 #import matplotlib.pyplot as plt
 #plt.plot(x, y)
@@ -71,8 +68,6 @@ Now we can plot the x and y we found above using matplotlib, the extremely usefu
 We can also put the x and y values we just found into a dataframe using pandas, another package used for data manipulation.
 
 ```{python}
-
-
 import pandas as pd 
 
 #Putting x and y arrays into dataframe & naming columns
@@ -87,19 +82,19 @@ df.head(5)
 Okay! As interesting as all of that was, I honestly prefer R to Python because it's a lot easier to visualize things and usually just in terms of user-friendliness in general. However, there is a way for R and Python to communicate with one another - using the 'reticulate' package in R. 
 
 ```{R}
-#R code chunk
+#R code portion
 library(reticulate)
 hi<-"Hello"
 ```
 
 ```{python}
-#Python code chunk
+#Python code portion
 hi="world"
 print(r.hi,hi) #access R-defined objects with r.
 ```
 
 ```{R}
-#R code chunk
+#R code portion
 cat(c(hi,py$hi)) #access Python-defined objects with py$
 
 ```

@@ -76,8 +76,7 @@
 <p>You can create lists of animal names. Or groceries. Or whatever you want really, but we can do animals here as an example.</p>
 <pre class="python"><code>animals = [&quot;Orca&quot;, &quot;Wolf&quot;, &quot;Gecko&quot;]</code></pre>
 <p>Within the same list we manipulate it however we want without having to go back and rewrite an entirely new list.</p>
-<pre class="python"><code>
-#Changing wolf to dog in animals list
+<pre class="python"><code>#Changing wolf to dog in animals list
 animals[1] = &quot;Dog&quot; 
 
 #Adding puma and jaguar to end of list
@@ -93,24 +92,20 @@ print(cats)</code></pre>
 <pre><code>## [&#39;Puma&#39;, &#39;Jaguar&#39;]</code></pre>
 <p>Arguably the single-most important tool in Python is numpy. You can use numpy to perform basically all of the mathematical functions without which Python is kind of well useless. At least for data science anyway. And math, clearly. Well, probably many other fields too.</p>
 <p>Here we can create 101 values and find y(x) = x^2 + sin(x) for each value.</p>
-<pre class="python"><code>
-import numpy as np
+<pre class="python"><code>import numpy as np
 
 #Creating 101 equally-spaced x values between -10 and 10
 x = np.linspace(-10, 10, num = 101, endpoint = True)
 
 y = x**2 + np.sin(x)</code></pre>
 <p>Now we can plot the x and y we found above using matplotlib, the extremely useful Python package for graphing.</p>
-<pre class="python"><code>
-#py_install(&quot;matplotlib&quot;)
+<pre class="python"><code>#py_install(&quot;matplotlib&quot;)
 #import matplotlib.pyplot as plt
 #plt.plot(x, y)
 #plt.xlabel(&quot;x&quot;)
 #plt.ylabel(&quot;y&quot;);</code></pre>
 <p>We can also put the x and y values we just found into a dataframe using pandas, another package used for data manipulation.</p>
-<pre class="python"><code>
-
-import pandas as pd 
+<pre class="python"><code>import pandas as pd 
 
 #Putting x and y arrays into dataframe &amp; naming columns
 df = pd.DataFrame({&#39;x&#39;: x, &#39;y&#39;: y})
@@ -124,14 +119,14 @@ df.head(5)</code></pre>
 ## 3  -9.4   88.335225
 ## 4  -9.2   84.417110</code></pre>
 <p>Okay! As interesting as all of that was, I honestly prefer R to Python because it’s a lot easier to visualize things and usually just in terms of user-friendliness in general. However, there is a way for R and Python to communicate with one another - using the ‘reticulate’ package in R.</p>
-<pre class="r"><code>#R code chunk
+<pre class="r"><code>#R code portion
 library(reticulate)
 hi&lt;-&quot;Hello&quot;</code></pre>
-<pre class="python"><code>#Python code chunk
+<pre class="python"><code>#Python code portion
 hi=&quot;world&quot;
 print(r.hi,hi) #access R-defined objects with r.</code></pre>
 <pre><code>## Hello world</code></pre>
-<pre class="r"><code>#R code chunk
+<pre class="r"><code>#R code portion
 cat(c(hi,py$hi)) #access Python-defined objects with py$</code></pre>
 <pre><code>## Hello world</code></pre>
 <p>It’s really useful and actually pretty simple!</p>
