@@ -103,8 +103,7 @@ It's really useful and actually pretty simple!
 
 
 Enjoy this stock photo of a python LOL:
-![ah snake!](~/website/static/post/2021-05-08-pythonpost_files/python.png)
-
-Enjoy this stock photo of a python LOL:
-![ah snake!](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.alamy.com%2Fcute-cartoon-snake-drawing-brown-ball-python-or-boa-constrictor-isolated-vector-clip-art-illustration-image368151496.html&psig=AOvVaw08cG4eDCVSOsDrq72NB2Tw&ust=1620797059852000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCPimi9_xwPACFQAAAAAdAAAAABAE)
+![ah snake!](pic_name.jpg)
+```{r, knitr::include_graphics(pic_name.jpg)}
+```
 
