@@ -102,5 +102,5 @@ cat(c(hi,py$hi)) #access Python-defined objects with py$
 It's really useful and actually pretty simple!
 
 Enjoy this stock photo of a python LOL:
-![python!](pyt.jpeg)
+![ah snake!](pyt.jpg)
 
