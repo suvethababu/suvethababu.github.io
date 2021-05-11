@@ -20,6 +20,16 @@ Link to google
     </item>
     
     <item>
+      <title>SDS 348 Project 2: Modeling, Testing, and Predicting</title>
+      <link>/project/project2/</link>
+      <pubDate>Wed, 28 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>Introduction:
+I chose to analyze the ‘FaithfulFaces’ dataset, regarding a study of college students and their observations of a photograph of a person of the opposite sex. The students then rated the person in the photograph on a scale from 1 to 10 for attractiveness (‘Attract’), trustworthiness (‘Trust’), faithfulness (‘Faithful’), sexual dimorphism (how distinctly masculine as a male or feminine as a female they appear) (‘SexDimorph’). The person in the photograph’s sex (‘FaceSex’), the rater’s sex (‘RaterSex’), and whether or not the person in the photo was unfaithful in a past relationship (‘Cheater’) was all recorded, to make a total of 7 variables.</description>
+    </item>
+    
+    <item>
       <title>Hello R Markdown</title>
       <link>/post/2015/07/23/hello-r-markdown/</link>
       <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
@@ -59,16 +69,6 @@ summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 2
       <guid>/project/project1/</guid>
       <description>Introduction:
 I chose two datasets, one with data on public spending on education per child in each state and another describing minimum wage in the US by state. I thought it would be interesting to study the state-by-state differences in educational spending as I work with children in the education field and hope to go into research regarding children as well. I also believe there will be a relation between the minimum wage of each state and the amount of money they spend for public education per child as states that do not have higher levels spending for wage may also not be willing to spend more toward education.</description>
-    </item>
-    
-    <item>
-      <title>SDS 348 Project 2: Modeling, Testing, and Predicting</title>
-      <link>/project/project2/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/project/project2/</guid>
-      <description>Introduction:
-I chose to analyze the ‘FaithfulFaces’ dataset, regarding a study of college students and their observations of a photograph of a person of the opposite sex. The students then rated the person in the photograph on a scale from 1 to 10 for attractiveness (‘Attract’), trustworthiness (‘Trust’), faithfulness (‘Faithful’), sexual dimorphism (how distinctly masculine as a male or feminine as a female they appear) (‘SexDimorph’). The person in the photograph’s sex (‘FaceSex’), the rater’s sex (‘RaterSex’), and whether or not the person in the photo was unfaithful in a past relationship (‘Cheater’) was all recorded, to make a total of 7 variables.</description>
     </item>
     
   </channel>

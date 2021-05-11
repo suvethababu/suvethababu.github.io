@@ -1,7 +1,7 @@
 ---
 title: "SDS 348 Project 2: Modeling, Testing, and Predicting"
 author: "Suvetha Babu"
-date: "4/28/2021"
+date: "2021-04-28"
 output:
   html_document:
     toc: yes
@@ -11,10 +11,6 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-library(timeDate)
-as.Date.timeDate <- timeDate:::as.Date.timeDate
-as.Date(timeDate('4/28/2021'))
-
 
 knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
