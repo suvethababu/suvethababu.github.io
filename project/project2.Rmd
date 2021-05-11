@@ -11,6 +11,11 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+library(timeDate)
+as.Date.timeDate <- timeDate:::as.Date.timeDate
+as.Date(timeDate('4/28/2021'))
+
+
 knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 hook_output = knit_hooks$get('output')
